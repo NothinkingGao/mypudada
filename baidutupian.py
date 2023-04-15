@@ -17,21 +17,22 @@ import glob
 ssl._create_default_https_context = ssl._create_unverified_context
 timeout = 5
 socket.setdefaulttimeout(timeout)
+from logger_config import logger
 
 def get_platform():
     import platform
     sys_platform = platform.platform().lower()
     if "windows" in sys_platform:
         return "Windows"
-        print("Windows")
+        logger.info("Windows")
     elif "macos" in sys_platform:
         return "MacOS"
-        print("MacOS")
+        logger.info("MacOS")
     elif "linux" in sys_platform:
         return "Linux"
-        print("Linux")
+        logger.info("Linux")
     else:
-        print("其他系统")
+        logger.info("其他系统")
     return 
 
 
@@ -55,7 +56,7 @@ class Crawler:
 
     # 获取图片url内容等
     # t 下载图片时间间隔
-    def __init__(self, t=0.1):
+    def __init__(self, t=0.5):
         self.time_sleep = t
 
     # 获取后缀名
@@ -111,19 +112,20 @@ class Crawler:
                 urllib.request.urlretrieve(url, filepath)
 
                 if os.path.getsize(filepath) < 5:
-                    print("下载到了空文件，跳过!")
+                    logger.info("下载到了空文件，跳过!")
                     os.unlink(filepath)
                     continue
             except urllib.error.HTTPError as urllib_err:
-                print(urllib_err)
+                logger.info(urllib_err)
                 continue
             except Exception as err:
                 time.sleep(1)
-                print(err)
-                print("产生未知错误，放弃保存")
+                logger.error(err)
+                logger.error(url)
+                logger.info("产生未知错误，放弃保存")
                 continue
             else:
-                print("数量+1,已有" + str(self.__counter) + "张图片")
+                logger.info("数量+1,已有" + str(self.__counter) + "张图片")
                 self.__counter += 1
         return
 
@@ -148,28 +150,29 @@ class Crawler:
                 rsp = page.read()
                 page.close()
             except UnicodeDecodeError as e:
-                print(e)
-                print('-----UnicodeDecodeErrorurl:', url)
+                logger.info(e)
+                logger.info('-----UnicodeDecodeErrorurl:', url)
             except urllib.error.URLError as e:
-                print(e)
-                print("-----urlErrorurl:", url)
+                logger.info(e)
+                logger.info("-----urlErrorurl:", url)
             except socket.timeout as e:
-                print(e)
-                print("-----socket timout:", url)
+                logger.info(e)
+                logger.info("-----socket timout:", url)
             else:
                 # 解析json
                 rsp_data = json.loads(rsp, strict=False)
                 if 'data' not in rsp_data:
-                    print("触发了反爬机制，自动重试！")
+                    logger.info("触发了反爬机制，自动重试！")
+                    time.sleep(1)
                 else:
                     self.save_image(rsp_data, word, dir)
                     # 读取下一页
-                    print("下载下一页")
+                    logger.info("下载下一页")
                     pn += self.__per_page
             retry_times -= 1
             if retry_times == 0:
                 return False
-        print("下载任务结束")
+        logger.info("下载任务结束")
         return True
 
     def start(self, word, total_page=1, start_page=1, per_page=30, save_name='default'):
@@ -220,7 +223,7 @@ def original_spider():
 
         # 加载new_ee下所有文件
         for json_file in json_files:
-            # print(json_file)
+            # logger.info(json_file)
 
             # 如果是已经爬过的,就不再爬取了
             if json_file.split('/')[-1].split('.')[0] in processed_json:
@@ -247,7 +250,6 @@ def spider_single_file(json_file,start_index = 0):
 
         # 根据文件编号创建文件夹
         save_dir = os.path.join('./images', name1, str(idx).zfill(6))
-        print(d['text'], save_dir)
         os.makedirs(save_dir, exist_ok=True)
 
         # 爬取到的文件保存到这个目录下
@@ -258,8 +260,9 @@ def spider_single_file(json_file,start_index = 0):
             success_write(json_file,idx)
             save_imgs = glob.glob(os.path.join(save_dir, '*'))
             data[idx]['images'] = save_imgs
+            logger.info(f"save file to {save_imgs}")
         else:
-            print(f"use my hander to handler it ...{json_file},index:{idx}")
+            logger.info(f"use my hander to handler it ...{json_file},index:{idx}")
             continue
 
     # 跑完一个文件就把这个文件的json字段跟新一下
@@ -306,15 +309,15 @@ def main():
         file_obj = json.loads(item)
         try:
             if file_obj["index"] < 99:
-                spider_single_file(file_obj["name"])
+                spider_single_file(file_obj["name"],file_obj["index"])
             else:
-                print(f"{item} has run completely!")
+                logger.info(f"{item} has run completely!")
         except Exception as e:
-            print(f"{item} has run error!,{str(e)}")
+            logger.info(f"{item} has run error!,{str(e)}")
             continue
 
 
-    print("run complete.")
+    logger.info("run complete.")
 
 
 if __name__ == '__main__':

@@ -1,0 +1,1 @@
+{"text": "澳门被判在与斯里兰卡的第二回合中0-3告负，同时罚款1万瑞士法郎。", "id": "9c537bea7a647e5f911f862c487c8c4f", "event_list": [{"event_type": "竞赛行为-胜负", "trigger": "告负", "trigger_start_index": 19, "arguments": [{"argument_start_index": 6, "role": "胜者", "argument": "斯里兰卡", "alias": []}, {"argument_start_index": 0, "role": "败者", "argument": "澳门", "alias": []}], "class": "竞赛行为"}], "images": []}

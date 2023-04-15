@@ -1,0 +1,12 @@
+2023-04-15 09:04:34,491 | ERROR | baidutupian.py:123 -D:\job\mypudada\baidutupian.py 
+The read operation timed out
+2023-04-15 09:04:34,491 | ERROR | baidutupian.py:124 -D:\job\mypudada\baidutupian.py 
+https://image.baidu.com/search/down?tn=download&ipn=dwnl&word=download&ie=utf8&fr=result&url=https%3A//img.neeqm.cn/2018/0926/20180926415739.jpg&thumburl=https%3A//img2.baidu.com/it/u%3D1167927454%2C3230905952%26fm%3D253%26fmt%3Dauto%26app%3D138%26f%3DJPEG%3Fw%3D640%26h%3D430
+2023-04-15 09:05:32,834 | ERROR | baidutupian.py:123 -D:\job\mypudada\baidutupian.py 
+'NoneType' object has no attribute 'group'
+2023-04-15 09:05:32,834 | ERROR | baidutupian.py:124 -D:\job\mypudada\baidutupian.py 
+https://image.baidu.com/search/down?tn=download&ipn=dwnl&word=download&ie=utf8&fr=result&url=https%3A//3159246232%2C1785837487&thumburl=https%3A//img0.baidu.com/it/u%3D1117202846%2C2537258542%26fm%3D253%26fmt%3Dauto%26app%3D138%26f%3DJPEG%3Fw%3D500%26h%3D575
+2023-04-15 09:07:01,306 | ERROR | baidutupian.py:123 -D:\job\mypudada\baidutupian.py 
+The read operation timed out
+2023-04-15 09:07:01,306 | ERROR | baidutupian.py:124 -D:\job\mypudada\baidutupian.py 
+https://image.baidu.com/search/down?tn=download&ipn=dwnl&word=download&ie=utf8&fr=result&url=https%3A//www.sxycrb.com/pic/2019-08/22/45ab7b95-9eee-458b-bee1-fd23389aeb54.jpg&thumburl=https%3A//img2.baidu.com/it/u%3D601970147%2C3695854187%26fm%3D253%26fmt%3Dauto%26app%3D138%26f%3DJPEG%3Fw%3D499%26h%3D298
