@@ -164,6 +164,7 @@ class Crawler:
                 if 'data' not in rsp_data:
                     logger.info("触发了反爬机制，自动重试！")
                     time.sleep(1)
+
                 else:
                     self.save_image(rsp_data, word, dir)
                     # 读取下一页
@@ -171,6 +172,7 @@ class Crawler:
                     pn += self.__per_page
             retry_times -= 1
             if retry_times == 0:
+                exit(0)
                 return False
         logger.info("下载任务结束")
         return True
@@ -247,23 +249,25 @@ def spider_single_file(json_file,start_index = 0):
     for idx, d in enumerate(data):
         if idx < start_index:
             continue
+        try:
+            # 根据文件编号创建文件夹
+            save_dir = os.path.join('./images', name1, str(idx).zfill(6))
+            os.makedirs(save_dir, exist_ok=True)
 
-        # 根据文件编号创建文件夹
-        save_dir = os.path.join('./images', name1, str(idx).zfill(6))
-        os.makedirs(save_dir, exist_ok=True)
+            # 爬取到的文件保存到这个目录下
+            crawler_result = crawler.start(d['text'], 1, 1, 1, save_name=save_dir)
 
-        # 爬取到的文件保存到这个目录下
-        crawler_result = crawler.start(d['text'], 1, 1, 1, save_name=save_dir)
-
-        # 爬取成功
-        if crawler_result:
-            success_write(json_file,idx)
-            save_imgs = glob.glob(os.path.join(save_dir, '*'))
-            data[idx]['images'] = save_imgs
-            logger.info(f"save file to {save_imgs}")
-        else:
-            logger.info(f"use my hander to handler it ...{json_file},index:{idx}")
-            continue
+            # 爬取成功
+            if crawler_result:
+                success_write(json_file,idx)
+                save_imgs = glob.glob(os.path.join(save_dir, '*'))
+                data[idx]['images'] = save_imgs
+                logger.info(f"save file to {save_imgs}")
+            else:
+                logger.info(f"use my hander to handler it ...{json_file},index:{idx}")
+                continue
+        except Exception as e:
+            logger.info(e)
 
     # 跑完一个文件就把这个文件的json字段跟新一下
     ff = open(os.path.join('./new_ee', name1 + '.json'), 'w', encoding='utf-8')
@@ -298,9 +302,26 @@ def create_process_file():
 
         f.writelines(items)
 
+def refresh_process_file():
+    with open("process.txt","r") as f:
+        names = f.readlines()
+
+    for i,item in enumerate(names):
+        file_obj = json.loads(item)
+        if file_obj["name"].find("dev_") > -1:
+            file_obj["index"] = 0
+            logger.info(file_obj)
+            names[i] = json.dumps(file_obj) + "\n"
+
+    with open("process.txt","w") as f:
+        f.writelines(names)
+
 def main():
     #success_write("dev_4.json",5)
     #create_process_file()
+
+    # refresh_process_file()
+    # return
 
     with open("process.txt","r") as f:
         lines = f.readlines()
@@ -315,6 +336,8 @@ def main():
         except Exception as e:
             logger.info(f"{item} has run error!,{str(e)}")
             continue
+
+
 
 
     logger.info("run complete.")
